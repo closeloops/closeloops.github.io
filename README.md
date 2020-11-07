@@ -1,4 +1,4 @@
-CloseLoop Website [![Build Status](https://travis-ci.org/mono/website.svg)](https://travis-ci.org/mono/website)
+C.LOOP Website [![Build Status](https://travis-ci.org/mono/website.svg)](https://travis-ci.org/mono/website)
 ==================================================================================================================
 
 This repository contains the files used for generating the [C.LOOP website](http://closeloop.github.io).
@@ -9,17 +9,6 @@ Contributing to the website
 ---------------------------
 
 **Note:** Major issues or feature requests should be filed on the [issue tracker](https://github.com/mono/website/issues) first, so we can discuss the implications.
-
-If you want to edit a page, the easiest way is to click the ![Edit page on GitHub](https://cloud.githubusercontent.com/assets/1376924/3712375/a6d7bc42-150f-11e4-9ceb-5230cbbfba3f.png) link under the page title on the website.
-
-This will open the source file on GitHub where you can click the pencil button to start editing:
-![Arrow to pencil](https://cloud.githubusercontent.com/assets/1376924/3712474/1d2fe57a-1517-11e4-86b2-d083dbeaa4ae.png)
-
-GitHub's editor shows you both the [Markdown](https://guides.github.com/features/mastering-markdown/) source as well as a preview of the rendered page:
-![Code editor](https://cloud.githubusercontent.com/assets/1376924/3769433/0f0ca2ee-18e1-11e4-97fc-3493683b853d.png)
-
-After you've finished your changes, enter a proper summary and description and click the "Propose file change" button to open a pull request:
-![Propose file change](https://cloud.githubusercontent.com/assets/1376924/3712481/52423448-1517-11e4-8aa8-9c9f9befb6bc.png)
 
 Setting up a local copy of the website
 --------------------------------------
@@ -38,9 +27,6 @@ After you've forked and cloned the repository, run the following commands:
 **Note:** you can add the `--watch` option when running `jekyll serve` to let Jekyll watch for file changes, which means the site will be rebuilt when a file is modified.
 
 **Note 2:** on case-insensitive file systems like on Windows and macOS you'll run into redirect loops for some URLs. The workaround is to disable redirects locally by removing the `gems: jekyll-redirect-from` entry from `_config.yml`.
-
-The site should now be running locally:
-![website](https://cloud.githubusercontent.com/assets/1376924/3712425/c1ab2e9c-1513-11e4-9df2-6e69d461c3cf.png)
 
 Repository structure
 --------------------
