@@ -1,0 +1,452 @@
+
+<div class="row">
+  <div class="small-12 columns">
+    <h1>Download</h1>
+
+    <p>
+      <b>Release channels:</b>
+      <span>
+        {% if include.releasename == "Nightly" %}
+        <b>Nightly</b>
+        {% else %}
+        <a href="/download/nightly/">Nightly</a>
+        {% endif %}
+        -
+        {% if include.releasename == "Preview" %}
+        <b>Preview</b>
+        {% else %}
+        <a href="/download/preview/">Preview</a>
+        {% endif %}
+        -
+        {% if include.releasename == "Stable" %}
+        <b>Stable</b>
+        {% else %}
+        <a href="/download/stable/">Stable</a>
+        {% endif %}
+        -
+        {% if include.releasename == "VS" %}
+        <b>Visual Studio</b>
+        {% else %}
+        <a href="/download/vs/">Visual Studio</a>
+        {% endif %}
+      </span>
+    </p>
+
+    {% if include.releasename == "VS" %}
+    <div data-alert class="alert-box secondary"><h6><i class="fas fa-info-circle"></i> The Visual Studio release channel contains packages which are shipped as part of a Visual Studio for Mac release. They are the most tested but also the least frequently updated packages.</h6></div>
+    {% endif %}
+
+    {% if include.releasename == "VS" %}
+    <h5>The latest Mono release in Visual Studio for Mac is: <strong>{{ include.releasedata.version }}</strong></h5>
+    {% elsif include.releasename != "Nightly" %}
+    <h5>The latest {{ include.releasename }} Mono release is: <strong>{{ include.releasedata.version }}</strong></h5>
+    {% endif %}
+
+    <p>Please choose your operating system to view the available packages. Source code is available on <a href="https://github.com/mono/mono">GitHub</a> (viewing only) or as a <a href="https://download.mono-project.com/sources/mono/{% if include.releasename == "Nightly" %}nightly/{% endif %}">Tarball</a>.</p>
+
+    <dl id="mono-download" class="tabs horizontal" data-tab data-options="deep_linking: true; scroll_to_content: false">
+      <dd class="active"><a href="#download-mac"><i class="fab fa-apple"></i>&nbsp;macOS</a></dd>
+      <dd><a href="#download-lin"><i class="fab fa-linux"></i>&nbsp;Linux</a></dd>
+      <dd><a href="#download-win"><i class="fab fa-windows"></i>&nbsp;Windows</a></dd>
+      {% if include.releasename == "Stable" %}
+      <dd><a href="#download-docker"><i class="fab fa-docker"></i>&nbsp;Docker</a></dd>
+      {% endif %}
+    </dl>
+
+    <div class="tabs-content" id="mono-download-panel">
+      <div class="panel content active" id="download-mac">
+        <h3>Mono for macOS is available as a Mac Package (.pkg)</h3>
+        <p>Please refer to the <a href="/docs/getting-started/install/mac">installation guide</a> for more information about how to install and configure your Mono environment.</p>
+        <div>
+          {% if include.releasename == "Stable" %}
+          <a href="{{site.data.vsrelease.mono_mac_url}}" class="button radius"><i class="fas fa-download"></i> Download Mono {{ site.data.vsrelease.version | split: ' ' | first }} (Visual Studio channel*)</a>
+          <a href="{{site.data.stablerelease.mono_mac_url}}" class="button radius button-less-important"><i class="fas fa-download"></i> Download Mono {{ site.data.stablerelease.version | split: ' ' | first }} (Stable channel)</a>
+          {% else %}
+          {% if include.releasename == "Nightly" %}
+          {% assign mono_mac_url = 'https://download.mono-project.com/archive/nightly/macos-10-universal/' %}
+          {% elsif include.releasename == "VS" %}
+          {% assign mono_mac_url = site.data.vsrelease.mono_mac_url %}
+          {% else %}
+          {% assign mono_mac_url = include.releasedata.mono_mac_url %}
+          {% endif %}
+          <a href="{{mono_mac_url}}" class="button radius"><i class="fas fa-download"></i> Download Mono</a>
+          {% endif %}
+          <p>Supported on macOS 10.9 and later. Check the <a href="/docs/about-mono/supported-platforms/macos/#uninstalling-mono-on-macos">uninstall instructions</a> if you want to remove Mono from your Mac.</p>
+        </div>
+        {% if include.releasename == "Stable" %}
+        <p><i>* We recommend this package if you're using Visual Studio for Mac since the stability of Visual Studio for Mac is only guaranteed with the Visual Studio channel releases.</i></p>
+        {% endif %}
+      </div>
+      <div class="panel content" id="download-lin">
+        <dl id="mono-download-linux" class="tabs horizontal" data-tab data-options="deep_linking: true; scroll_to_content: false">
+          <dd class="active"><a href="#download-lin-ubuntu"><img src="/images/ubuntu-logo.svg" height="20px" width="20px" alt="Ubuntu Logo" />&nbsp;&nbsp;Ubuntu</a></dd>
+          <dd><a href="#download-lin-debian"><img src="/images/debian-logo.svg" height="20px" width="20px" alt="Debian Logo" />&nbsp;&nbsp;Debian</a></dd>
+          <dd><a href="#download-lin-raspbian"><img src="/images/raspbian-logo.svg" height="20px" width="20px" alt="Raspbian Logo" />&nbsp;&nbsp;Raspbian</a></dd>
+          <dd><a href="#download-lin-centos"><img src="/images/centos-logo.svg" height="20px" width="20px" alt="CentOS Logo" />&nbsp;&nbsp;CentOS/RHEL</a></dd>
+          <dd><a href="#download-lin-fedora"><img src="/images/fedora-logo.svg" height="20px" width="20px" alt="Fedora Logo" />&nbsp;&nbsp;Fedora</a></dd>
+        </dl>
+        <div class="tabs-content horizontal">
+          <div class="panel content panel-subcontainer active" id="download-lin-ubuntu">
+            <h2>
+              <span class="number-circle">1</span>
+              Add the Mono repository to your system
+            </h2>
+            <p>The package repository hosts the packages you need, add it with the following commands.</p>
+            <p><i>Note:</i> the packages should work on newer Ubuntu versions too but we only test the ones listed below.</p>
+            <h3>Ubuntu 20.04 <small>(amd64, armhf, arm64, ppc64el)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/ubuntu preview-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <h3>Ubuntu 18.04 <small>(i386, amd64, armhf, arm64, ppc64el)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/ubuntu preview-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <h3>Ubuntu 16.04 <small>(i386, amd64, armhf, arm64, ppc64el)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+sudo apt install apt-transport-https ca-certificates
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/ubuntu preview-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+sudo apt install apt-transport-https ca-certificates
+echo "deb https://download.mono-project.com/repo/ubuntu {{ include.releasename | downcase }}-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <hr />
+            <h2>
+              <span class="number-circle">2</span>
+              Install Mono
+            </h2>
+            <pre class="install-example"><code class="language-bash">sudo apt install mono-devel</code></pre>
+            <p>The package <b>mono-devel</b> should be installed to compile code.</p>
+            {% if include.releasename == "Nightly" or include.releasename == "Preview" %}
+            <p>The package <b>mono-llvm-support</b> should be installed for LLVM JIT/AOT support. See <a href="/docs/advanced/mono-llvm/">here</a> for more about LLVM Mono.</p>
+            {% endif %}
+            <p>The package <b>mono-complete</b> should be installed to install everything - this should cover most cases of "assembly not found" errors.</p>
+            <p>The package <b>mono-dbg</b> should be installed to get debugging symbols for framework libraries - allowing you to get line numbers in stack traces.</p>
+            <p>The package <b>referenceassemblies-pcl</b> should be installed for PCL compilation support - this will resolve most cases of "Framework not installed: .NETPortable" errors during software compilation.</p>
+            <p>The package <b>ca-certificates-mono</b> should be installed to get SSL certificates for HTTPS connections. Install this package if you run into trouble making HTTPS connections.</p>
+            <p>The package <b>mono-xsp4</b> should be installed for running ASP.NET applications.</p>
+            <hr />
+            <h2>
+              <span class="number-circle">3</span>
+              Verify Installation
+            </h2>
+            <p>After the installation completed successfully, it's a good idea to run through the basic hello world examples on <a href="/docs/getting-started/mono-basics/">this page</a> to verify Mono is working correctly.</p>
+            <h4>Notes</h4>
+            <p>Mono on Linux before 3.12 by default didn't trust any SSL certificates so you got errors when accessing HTTPS resources. This is not required anymore as 3.12 and later include a new tool that runs on package installation and syncs Mono's certificate store with the system certificate store (on older versions you had to import Mozilla's list of trusted certificates by running <code>mozroots --import --sync</code>). Some systems are configured in a way so that the necessary package isn't pulled in when Mono is installed, in those cases <b>make sure the <code>ca-certificates-mono</code> package</b> is installed.</p>
+          </div>
+          <div class="panel content panel-subcontainer" id="download-lin-debian">
+            <h2>
+              <span class="number-circle">1</span>
+              Add the Mono repository to your system
+            </h2>
+            <p>The package repository hosts the packages you need, add it with the following commands.</p>
+            <p><i>Note:</i> the packages should work on newer Debian versions too but we only test the ones listed below.</p>
+            <h3>Debian 10 <small>(i386, amd64, armhf, arm64, armel, ppc64el)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-buster main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/debian preview-buster main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-buster main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <h3>Debian 9 <small>(i386, amd64, armhf, arm64, armel, ppc64el)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-stretch main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/debian preview-stretch main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-stretch main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <hr />
+            <h2>
+              <span class="number-circle">2</span>
+              Install Mono
+            </h2>
+            <pre class="install-example"><code class="language-bash">sudo apt install mono-devel</code></pre>
+            <p>The package <b>mono-devel</b> should be installed to compile code.</p>
+            {% if include.releasename == "Nightly" or include.releasename == "Preview" %}
+            <p>The package <b>mono-llvm-support</b> should be installed for LLVM JIT/AOT support. See <a href="/docs/advanced/mono-llvm/">here</a> for more about LLVM Mono.</p>
+            {% endif %}
+            <p>The package <b>mono-complete</b> should be installed to install everything - this should cover most cases of "assembly not found" errors.</p>
+            <p>The package <b>mono-dbg</b> should be installed to get debugging symbols for framework libraries - allowing you to get line numbers in stack traces.</p>
+            <p>The package <b>referenceassemblies-pcl</b> should be installed for PCL compilation support - this will resolve most cases of "Framework not installed: .NETPortable" errors during software compilation.</p>
+            <p>The package <b>ca-certificates-mono</b> should be installed to get SSL certificates for HTTPS connections. Install this package if you run into trouble making HTTPS connections.</p>
+            <p>The package <b>mono-xsp4</b> should be installed for running ASP.NET applications.</p>
+            <hr />
+            <h2>
+              <span class="number-circle">3</span>
+              Verify Installation
+            </h2>
+            <p>After the installation completed successfully, it's a good idea to run through the basic hello world examples on <a href="/docs/getting-started/mono-basics/">this page</a> to verify Mono is working correctly.</p>
+            <h4>Notes</h4>
+            <p>Mono on Linux before 3.12 by default didn't trust any SSL certificates so you got errors when accessing HTTPS resources. This is not required anymore as 3.12 and later include a new tool that runs on package installation and syncs Mono's certificate store with the system certificate store (on older versions you had to import Mozilla's list of trusted certificates by running <code>mozroots --import --sync</code>). Some systems are configured in a way so that the necessary package isn't pulled in when Mono is installed, in those cases <b>make sure the <code>ca-certificates-mono</code> package</b> is installed.</p>
+          </div>
+          <div class="panel content panel-subcontainer" id="download-lin-raspbian">
+            <h2>
+              <span class="number-circle">1</span>
+              Add the Mono repository to your system
+            </h2>
+            <p>The package repository hosts the packages you need, add it with the following commands.</p>
+            <p><i>Note:</i> the packages should work on newer Raspbian versions too but we only test the ones listed below.</p>
+            <h3>Raspbian 10 <small>(armhf)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-raspbianbuster main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/debian preview-raspbianbuster main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-raspbianbuster main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <h3>Raspbian 9 <small>(armhf)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-raspbianstretch main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+echo "deb https://download.mono-project.com/repo/debian preview-raspbianstretch main" | sudo tee /etc/apt/sources.list.d/mono-official-preview.list
+sudo apt update</code></pre>
+{% else %}
+<pre><code class="language-bash">sudo apt install apt-transport-https dirmngr gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/debian {{ include.releasename | downcase }}-raspbianstretch main" | sudo tee /etc/apt/sources.list.d/mono-official-{{ include.releasename | downcase }}.list
+sudo apt update</code></pre>
+{% endif %}
+            <hr />
+            <h2>
+              <span class="number-circle">2</span>
+              Install Mono
+            </h2>
+            <pre class="install-example"><code class="language-bash">sudo apt install mono-devel</code></pre>
+            <p>The package <b>mono-devel</b> should be installed to compile code.</p>
+            {% if include.releasename == "Nightly" or include.releasename == "Preview" %}
+            <p>The package <b>mono-llvm-support</b> should be installed for LLVM JIT/AOT support. See <a href="/docs/advanced/mono-llvm/">here</a> for more about LLVM Mono.</p>
+            {% endif %}
+            <p>The package <b>mono-complete</b> should be installed to install everything - this should cover most cases of "assembly not found" errors.</p>
+            <p>The package <b>mono-dbg</b> should be installed to get debugging symbols for framework libraries - allowing you to get line numbers in stack traces.</p>
+            <p>The package <b>referenceassemblies-pcl</b> should be installed for PCL compilation support - this will resolve most cases of "Framework not installed: .NETPortable" errors during software compilation.</p>
+            <p>The package <b>ca-certificates-mono</b> should be installed to get SSL certificates for HTTPS connections. Install this package if you run into trouble making HTTPS connections.</p>
+            <p>The package <b>mono-xsp4</b> should be installed for running ASP.NET applications.</p>
+            <hr />
+            <h2>
+              <span class="number-circle">3</span>
+              Verify Installation
+            </h2>
+            <p>After the installation completed successfully, it's a good idea to run through the basic hello world examples on <a href="/docs/getting-started/mono-basics/">this page</a> to verify Mono is working correctly.</p>
+            <h4>Notes</h4>
+            <p>Mono on Linux before 3.12 by default didn't trust any SSL certificates so you got errors when accessing HTTPS resources. This is not required anymore as 3.12 and later include a new tool that runs on package installation and syncs Mono's certificate store with the system certificate store (on older versions you had to import Mozilla's list of trusted certificates by running <code>mozroots --import --sync</code>). Some systems are configured in a way so that the necessary package isn't pulled in when Mono is installed, in those cases <b>make sure the <code>ca-certificates-mono</code> package</b> is installed.</p>
+          </div>
+          <div class="panel content panel-subcontainer" id="download-lin-centos">
+            <h2>
+              <span class="number-circle">1</span>
+              Add the Mono repository to your system
+            </h2>
+            <p>The package repository hosts the packages you need, add it with the following commands <b>in a root shell</b>.</p>
+            <p><i>Note:</i> the packages should work on newer CentOS/RHEL versions too but we only test the ones listed below.</p>
+            <h3>CentOS/RHEL 8 <small>(x86_64)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">rpmkeys --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos8-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos8-{{ include.releasename | downcase }}.repo'
+su -c 'curl https://download.mono-project.com/repo/centos8-preview.repo | tee /etc/yum.repos.d/mono-centos8-preview.repo'</code></pre>
+{% else %}
+<pre><code class="language-bash">rpmkeys --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos8-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos8-{{ include.releasename | downcase }}.repo'</code></pre>
+{% endif %}
+            <h3>CentOS/RHEL 7 <small>(x86_64)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">rpmkeys --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos7-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos7-{{ include.releasename | downcase }}.repo'
+su -c 'curl https://download.mono-project.com/repo/centos7-preview.repo | tee /etc/yum.repos.d/mono-centos7-preview.repo'</code></pre>
+{% else %}
+<pre><code class="language-bash">rpmkeys --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos7-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos7-{{ include.releasename | downcase }}.repo'</code></pre>
+{% endif %}
+            <h3>CentOS/RHEL 6 <small>(x86_64, i686)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">rpm --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos6-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos6-{{ include.releasename | downcase }}.repo'
+su -c 'curl https://download.mono-project.com/repo/centos6-preview.repo | tee /etc/yum.repos.d/mono-centos6-preview.repo'</code></pre>
+{% else %}
+<pre><code class="language-bash">rpm --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+su -c 'curl https://download.mono-project.com/repo/centos6-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos6-{{ include.releasename | downcase }}.repo'</code></pre>
+{% endif %}
+            <hr />
+            <h2>
+              <span class="number-circle">2</span>
+              Install Mono
+            </h2>
+            <pre class="install-example"><code class="language-bash">yum install mono-devel</code></pre>
+            <p>The package <b>mono-devel</b> should be installed to compile code.</p>
+            <p>The package <b>mono-complete</b> should be installed to install everything - this should cover most cases of "assembly not found" errors.</p>
+            <p>The package <b>referenceassemblies-pcl</b> should be installed for PCL compilation support - this will resolve most cases of "Framework not installed: .NETPortable" errors during software compilation.</p>
+            <p>The package <b>xsp</b> should be installed for running ASP.NET applications.</p>
+            <hr />
+            <h2>
+              <span class="number-circle">3</span>
+              Verify Installation
+            </h2>
+            <p>After the installation completed successfully, it's a good idea to run through the basic hello world examples on <a href="/docs/getting-started/mono-basics/">this page</a> to verify Mono is working correctly.</p>
+          </div>
+          <div class="panel content panel-subcontainer" id="download-lin-fedora">
+            <h2>
+              <span class="number-circle">1</span>
+              Add the Mono repository to your system
+            </h2>
+            <p>The package repository hosts the packages you need, add it with the following commands <b>in a root shell</b>.</p>
+            <p><i>Note:</i> we're using the CentOS/RHEL repositories on Fedora.</p>
+            <h3>Fedora 29 <small>(x86_64)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+su -c 'curl https://download.mono-project.com/repo/centos8-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos8-{{ include.releasename | downcase }}.repo'
+su -c 'curl https://download.mono-project.com/repo/centos8-preview.repo | tee /etc/yum.repos.d/mono-centos8-preview.repo'
+dnf update</code></pre>
+{% else %}
+<pre><code class="language-bash">rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+su -c 'curl https://download.mono-project.com/repo/centos8-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos8-{{ include.releasename | downcase }}.repo'
+dnf update</code></pre>
+{% endif %}
+            <h3>Fedora 28 <small>(x86_64)</small></h3>
+{% if include.releasename == "Nightly" %}
+<pre><code class="language-bash">rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+su -c 'curl https://download.mono-project.com/repo/centos7-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos7-{{ include.releasename | downcase }}.repo'
+su -c 'curl https://download.mono-project.com/repo/centos7-preview.repo | tee /etc/yum.repos.d/mono-centos7-preview.repo'
+dnf update</code></pre>
+{% else %}
+<pre><code class="language-bash">rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+su -c 'curl https://download.mono-project.com/repo/centos7-{{ include.releasename | downcase }}.repo | tee /etc/yum.repos.d/mono-centos7-{{ include.releasename | downcase }}.repo'
+dnf update</code></pre>
+{% endif %}
+            <hr />
+            <h2>
+              <span class="number-circle">2</span>
+              Install Mono
+            </h2>
+            <pre class="install-example"><code class="language-bash">dnf install mono-devel</code></pre>
+            <p>The package <b>mono-devel</b> should be installed to compile code.</p>
+            <p>The package <b>mono-complete</b> should be installed to install everything - this should cover most cases of "assembly not found" errors.</p>
+            <p>The package <b>referenceassemblies-pcl</b> should be installed for PCL compilation support - this will resolve most cases of "Framework not installed: .NETPortable" errors during software compilation.</p>
+            <p>The package <b>xsp</b> should be installed for running ASP.NET applications.</p>
+            <hr />
+            <h2>
+              <span class="number-circle">3</span>
+              Verify Installation
+            </h2>
+            <p>After the installation completed successfully, it's a good idea to run through the basic hello world examples on <a href="/docs/getting-started/mono-basics/">this page</a> to verify Mono is working correctly.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel content" id="download-win">
+        <h3>Mono for Windows is available as a Windows Installer file</h3>
+        <p>Please refer to the <a href="/docs/getting-started/install/windows">installation guide</a> for more information about how to install and configure your Mono environment.</p>
+        <div>
+          {% if include.releasename == "Nightly" %}
+          {% assign mono_windows_url = 'https://download.mono-project.com/archive/nightly/windows-installer/' %}
+          {% assign mono_windows64_url = mono_windows_url %}
+          {% else %}
+          {% assign mono_windows_url = include.releasedata.mono_windows_url %}
+          {% assign mono_windows64_url = include.releasedata.mono_windows64_url %}
+          {% endif %}
+          <a href="{{mono_windows_url}}" class="button radius"><i class="fas fa-download"></i> Download Mono 32-bit</a>
+          <a href="{{mono_windows64_url}}" class="button radius"><i class="fas fa-download"></i> Download Mono 64-bit (no GTK#)</a>
+        </div>
+        <p>Supported on Windows 7, 8, 10 or later.</p>
+        {% if include.releasename != "Nightly" %}
+        <hr />
+        <h5>GTK# for .NET</h5>
+        <p>Installer for running Gtk#-based applications on Microsoft .NET:</p>
+        <div>
+          <a href="{{ include.releasedata.gtksharp_windows_url }}" class="button radius small"><i class="fas fa-download"></i> Download Gtk#</a>
+        </div>
+        {% endif %}
+      </div>
+      {% if include.releasename == "Stable" %}
+      <div class="panel content" id="download-docker">
+        <h3>Mono is available on <a href="https://hub.docker.com/_/mono/">Docker Hub</a></h3>
+        <p>The simplest way to get started is:</p>
+        <pre><code class="language-bash">$ docker run -it mono:latest bash</code></pre>
+        <p>This will download the latest Mono Docker image, create a container and put you into an interactive shell.</p>
+        <h3>Available tags</h3>
+        <p>There are several tags for selecting the desired Mono version:</p>
+        <ul>
+          <li><code>latest</code> - Always points to the latest release</li>
+          <li><code>X.X.X.X</code> - points to a specific version, e.g. 5.8.0.108</li>
+          <li><code>X.X.X</code> - points to the latest version in the X.X.X series, e.g. 5.8.0</li>
+          <li><code>X.X</code> - points to the latest version in the X.X series, e.g. 5.8</li>
+          <li><code>X</code> - points to the latest version in the X series, e.g. 5</li>
+        </ul>
+        <p>The latest version, one minor version before that and the last version before a major version bump are periodically rebuilt by Docker Hub to pull in updates from the base Debian image.</p>
+        <p>All other version tags are still available, but won't get those updates so you need to keep your images up to date by running <code>apt update</code> yourself. We encourage you to move to latest Mono releases as soon as they're available.</p>
+        <p>Starting with Mono 5.2 we provide a slim variant (e.g. <code>latest-slim</code>) which only contains the bare minimum to run a simple console app. You can use this as a base and add just what you need.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <h2>Release Notes</h2>
+    <p>Check out the release notes of all Mono versions <a href="/docs/about-mono/releases/">here</a>.</p>
+
+    <h2>MonoDevelop IDE</h2>
+    <p>Please visit the <a href="http://www.monodevelop.com/">MonoDevelop website</a> for more details about our cross-platform IDE.</p>
+
+    <h2>Older releases</h2>
+    <p>To access older Mono releases for macOS and Windows, check the <a href="https://download.mono-project.com/archive/">archive</a> on the download server. For Linux, please check the "Accessing older releases" section in the <a href="/docs/getting-started/install/linux/#accessing-older-releases">installation guide</a>.</p>
+  </div>
+</div>
+
+<script>
+function runScripts() {
+  $(document).ready(function() {
+    function activate(os,distro) {
+      $('#mono-download>dd.active').removeClass();
+      $('#mono-download>dd:has(a[href=#download-' + os + '])').addClass('active');
+      $('#mono-download-panel>div.panel.active').removeClass('active');
+      $('#mono-download-panel>#download-' + os).addClass('active');
+    }
+    if (window.location.hash) {
+      if (window.location.hash.search("download-lin-") >= 0) {
+        activate('lin');
+      }
+    }
+    else {
+      if (window.navigator.appVersion.search('Linux') >= 0 || window.navigator.platform.search('Linux') >= 0) {
+        activate('lin');
+      } else if (window.navigator.appVersion.search('Windows') >= 0 || window.navigator.platform.search('Windows') >= 0) {
+        activate('win');
+      }
+    }
+  });
+}
+</script>
